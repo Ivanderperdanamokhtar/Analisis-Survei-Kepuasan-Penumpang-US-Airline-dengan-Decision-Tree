@@ -1,0 +1,87 @@
+---
+title: "Decision Tree Passenger Statisfaction"
+author: "Ivander Perdana Mokhtar"
+date: "2025-01-02"
+output: html_document
+---
+
+```{r}
+# Section 1: Load necessary libraries
+library(dplyr)
+library(stringr)
+library(rpart)
+library(rpart.plot)
+library(tree)
+```
+```{r}
+data <-read.csv("C:/Users/Asus/Downloads/airline.csv", stringsAsFactors=TRUE)
+
+```
+```{r}
+names(data) <- str_to_lower(names(data))
+
+```
+```{r}
+data <- subset(data, select = -x)
+data <- subset(data, select = -id)
+
+```
+
+
+
+
+```{r}
+# Section 3: Compute percentiles and age ranges
+percentiles <- quantile(data$Flight.Distance, probs = c(0.25, 0.75))
+age_min <- min(data$Age)
+age_max <- max(data$Age)
+range1 <- floor((age_max - age_min) / 3)
+range2 <- floor(range1 * 2)
+```
+
+```{r}
+# Section 4: Categorize time convenience
+data$Time.Category <- cut(data$departure.arrival.time.convenient,
+                          breaks = c(-Inf, 2, 4, Inf),
+                          labels = c("Tidak Nyaman", "Cukup Nyaman", "Sangat Nyaman"),
+                          include.lowest = TRUE)
+```
+
+```{r}
+# Section 5: Build and summarize decision tree
+tree <- tree(satisfaction ~ . -gender, data)
+summary(tree)
+plot(tree)
+text(tree, pretty = 0, cex = .65)
+```
+
+```{r}
+# Section 6: Split data into training and testing sets
+set.seed(2)
+jumlah_train <- floor(0.7 * nrow(data))
+train <- data[sample(nrow(data), jumlah_train, replace = FALSE), ]
+test <- data[setdiff(1:nrow(data), 1:jumlah_train), ]
+```
+
+
+```{r}
+# Section 7: Train decision tree on training data
+ttree <- tree(satisfaction ~ . - gender, data = train)
+```
+
+```{r}
+# Section 8: Predict on testing data
+test_predictions <- predict(ttree, test, type = 'class')
+```
+```{r}
+# Section 9: Generate confusion matrix
+table(test_predictions, test$satisfaction)
+```
+```{r}
+# Section 10: Calculate accuracy
+tp <- 15224
+tn <- 12696
+total <- sum(c(15224, 729, 2523, 12696))
+accuracy <- (tp + tn) / total
+accuracy
+```
