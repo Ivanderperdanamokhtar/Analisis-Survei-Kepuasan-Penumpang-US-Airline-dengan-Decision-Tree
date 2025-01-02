@@ -13,7 +13,7 @@ Proyek ini menggunakan metode **Decision Tree** untuk menganalisis survei kepuas
   - Putri Intan Kirani (121450055)
   - Afifah Syaharani (121450097)
   - Audrey Ribka Desmonda M. (121450103)
-- **Akurasi Model:** 87.7%
+- **Akurasi Model:** 89.56%
 - **Dataset:** [Airline Passenger Satisfaction](https://www.kaggle.com/datasets/teejmahal20/airline-passenger-satisfaction)
 
 ## Fitur Dataset
